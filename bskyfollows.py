@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 #title           :bskyfollows.py
 #description     :This will follow anyone who's following you that you haven't
-#                 followed back. 
+#                 followed back. It will also unfollow anyone who you've
+#                 followed but who hasn't followed you back.
 #author          :tellynumner
-#date            :01/15/25
-#version         :0.1
+#date            :01/24/25
+#version         :0.2
 #usage           :./bskyfollows.py
 #notes           :
 #python_version  :3.12.3
