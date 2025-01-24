@@ -33,7 +33,22 @@ def getFollowers():
         time.sleep(0.5)
     return followers
 
-def fixFollowers(getfol_list):
+def getFollows():
+    follows = []
+    cursor = None
+    while True:
+        params = {'actor': user, 'limit': 100}
+        if cursor:
+            params['cursor'] = cursor
+        response = client.app.bsky.graph.get_follows(params)
+        follows.extend([follow.model_dump() for follow in response.follows])
+        if not response.cursor:
+            break
+        cursor = response.cursor
+        time.sleep(0.5)
+    return follows
+
+def fixDict(getfol_list):
     new_list = []
     for item in getfol_list:
         temp_dict = {}
@@ -43,6 +58,7 @@ def fixFollowers(getfol_list):
         temp_dict['handle'] = this_dict.get('handle', None)
         viewer = this_dict.get('viewer', None)
         temp_dict['following'] = viewer.get('following', None)
+        temp_dict['followed_by'] = viewer.get('followed_by', None)
         new_list.append(temp_dict)
     return new_list
 
@@ -53,9 +69,20 @@ def followBack(follower_list):
             client.follow(i['did'])
     print("I followed everyone back!")
 
+def unfollow(follows_list):
+    for i in follows_list:
+        if i['followed_by'] == None:
+            print(i['handle'] + " doesn't follow me back.")
+            if i['following'] is not None:
+                client.delete_follow(i['following'])
+                print("Unfollowed " + i['handle'] + "!")
+    print("I unfollowed everyone!")
+
 def main():
-    followers = fixFollowers(getFollowers())
+    followers = fixDict(getFollowers())
     followBack(followers)
+    follows = fixDict(getFollows())
+    unfollow(follows)
 
 if __name__ == '__main__':
     main()
