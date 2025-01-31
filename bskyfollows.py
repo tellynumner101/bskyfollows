@@ -37,7 +37,7 @@ def get_following():
         follows.extend(response.follows)
     return follows
 
-def followBack(follower_list):
+def follow_back(follower_list):
     '''Follows back any account following us'''
     count = 0
     for i in follower_list:
@@ -69,7 +69,7 @@ def main():
     '''Main processing function'''
     print('Processing followers...')
     followers = get_followers()
-    followBack(followers)
+    follow_back(followers)
     print('')
     print('Processing follows...')
     following = get_following()
