@@ -40,11 +40,11 @@ def get_following():
 def follow_back(follower_list):
     '''Follows back any account following us'''
     count = 0
-    for i in follower_list:
-        if i.viewer['following'] == None:
+    for follower in follower_list:
+        if follower.viewer['following'] == None:
             count += 1
-            print("Following " + i.handle + " back.")
-            client.follow(i.did)
+            print("Following " + follower.handle + " back.")
+            client.follow(follower.did)
     if count != 0:
         print("I followed back " + str(count) + " accounts!")
     return None
@@ -52,26 +52,26 @@ def follow_back(follower_list):
 def unfollow(follows_list):
     '''Unfollows any account not following us'''
     count = 0
-    for i in follows_list:
-        if i.viewer['followed_by'] == None:
+    for follow in follows_list:
+        if follow.viewer['followed_by'] == None:
             count += 1
-            print(i.handle + " hasn't followed me back.")
-            if i.viewer['following'] is not None:
-                client.delete_follow(i.viewer['following'])
-                print("Unfollowed " + i.handle + "!")
+            print(follow.handle + " hasn't followed me back.")
+            if follow.viewer['following'] is not None:
+                client.delete_follow(follow.viewer['following'])
+                print("Unfollowed " + follow.handle + "!")
             else:
-                print(i.handle + " doesn't have a following link! Manually remove!")
+                print(follow.handle + " doesn't have a following link! Manually remove!")
     if count != 0:
         print("I unfollowed " + str(count) + " accounts!")
     return None
 
 def main():
     '''Main processing function'''
-    print('Processing followers...')
+    print('Processing followers list...')
     followers = get_followers()
     follow_back(followers)
     print('')
-    print('Processing follows...')
+    print('Processing following list...')
     following = get_following()
     unfollow(following)
     print('')
