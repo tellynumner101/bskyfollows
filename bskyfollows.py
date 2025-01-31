@@ -18,7 +18,7 @@ client = Client()
 client.login(user, pasw)
 
 def get_followers():
-    '''Collects get_followers data on the list of accounts you follow'''
+    '''Collects profile data on the list of accounts following you'''
     followers = []
     response = client.get_followers(user, None, 100)
     followers.extend(response.followers)
@@ -28,7 +28,7 @@ def get_followers():
     return followers
 
 def get_following():
-    '''Collects get_follows data on the list of accounts following you'''
+    '''Collects profile data on the list of accounts you follow'''
     follows = []
     response = client.get_follows(user, None, 100)
     follows.extend(response.follows)
@@ -46,7 +46,7 @@ def followBack(follower_list):
             print("Following " + i.handle + " back.")
             client.follow(i.did)
     if count != 0:
-        print("I followed everyone back!")
+        print("I followed back " + str(count) + " accounts!")
     return None
 
 def unfollow(follows_list):
@@ -62,7 +62,7 @@ def unfollow(follows_list):
             else:
                 print(i.handle + " doesn't have a following link! Manually remove!")
     if count != 0:
-        print("I unfollowed everyone!")
+        print("I unfollowed " + str(count) + " accounts!")
     return None
 
 def main():
