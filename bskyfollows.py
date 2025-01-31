@@ -4,86 +4,78 @@
 #                 followed back. It will also unfollow anyone who you've
 #                 followed but who hasn't followed you back.
 #author          :tellynumner
-#date            :01/24/25
-#version         :0.2
+#date            :01/31/25
+#version         :0.3
 #usage           :./bskyfollows.py
 #notes           :
 #python_version  :3.12.3
 #=============================================================================
 
-import ast
 from atproto import Client
-import time
-from my_data import user, pasw
+from my_data import *
 
 client = Client()
 client.login(user, pasw)
 
-def getFollowers():
+def get_followers():
+    '''Collects get_followers data on the list of accounts you follow'''
     followers = []
-    cursor = None
-    while True:
-        params = {'actor': user, 'limit': 100}
-        if cursor:
-            params['cursor'] = cursor
-        response = client.app.bsky.graph.get_followers(params)
-        followers.extend([follower.model_dump() for follower in response.followers])
-        if not response.cursor:
-            break
-        cursor = response.cursor
-        time.sleep(0.5)
+    response = client.get_followers(user, None, 100)
+    followers.extend(response.followers)
+    while response.cursor:
+        response = client.get_followers(user, response.cursor, 100)
+        followers.extend(response.followers)
     return followers
 
-def getFollows():
+def get_following():
+    '''Collects get_follows data on the list of accounts following you'''
     follows = []
-    cursor = None
-    while True:
-        params = {'actor': user, 'limit': 100}
-        if cursor:
-            params['cursor'] = cursor
-        response = client.app.bsky.graph.get_follows(params)
-        follows.extend([follow.model_dump() for follow in response.follows])
-        if not response.cursor:
-            break
-        cursor = response.cursor
-        time.sleep(0.5)
+    response = client.get_follows(user, None, 100)
+    follows.extend(response.follows)
+    while response.cursor:
+        response = client.get_follows(user, response.cursor, 100)
+        follows.extend(response.follows)
     return follows
 
-def fixDict(getfol_list):
-    new_list = []
-    for item in getfol_list:
-        temp_dict = {}
-        item = str(item)
-        this_dict = ast.literal_eval(item)
-        temp_dict['did'] = this_dict.get('did', None)
-        temp_dict['handle'] = this_dict.get('handle', None)
-        viewer = this_dict.get('viewer', None)
-        temp_dict['following'] = viewer.get('following', None)
-        temp_dict['followed_by'] = viewer.get('followed_by', None)
-        new_list.append(temp_dict)
-    return new_list
-
 def followBack(follower_list):
+    '''Follows back any account following us'''
+    count = 0
     for i in follower_list:
-        if i['following'] == None:
-            print("Following " + i['handle'] + " back.")
-            client.follow(i['did'])
-    print("I followed everyone back!")
+        if i.viewer['following'] == None:
+            count += 1
+            print("Following " + i.handle + " back.")
+            client.follow(i.did)
+    if count != 0:
+        print("I followed everyone back!")
+    return None
 
 def unfollow(follows_list):
+    '''Unfollows any account not following us'''
+    count = 0
     for i in follows_list:
-        if i['followed_by'] == None:
-            print(i['handle'] + " doesn't follow me back.")
-            if i['following'] is not None:
-                client.delete_follow(i['following'])
-                print("Unfollowed " + i['handle'] + "!")
-    print("I unfollowed everyone!")
+        if i.viewer['followed_by'] == None:
+            count += 1
+            print(i.handle + " hasn't followed me back.")
+            if i.viewer['following'] is not None:
+                client.delete_follow(i.viewer['following'])
+                print("Unfollowed " + i.handle + "!")
+            else:
+                print(i.handle + " doesn't have a following link! Manually remove!")
+    if count != 0:
+        print("I unfollowed everyone!")
+    return None
 
 def main():
-    followers = fixDict(getFollowers())
+    '''Main processing function'''
+    print('Processing followers...')
+    followers = get_followers()
     followBack(followers)
-    follows = fixDict(getFollows())
-    unfollow(follows)
+    print('')
+    print('Processing follows...')
+    following = get_following()
+    unfollow(following)
+    print('')
+    print('All done!')
 
 if __name__ == '__main__':
     main()
