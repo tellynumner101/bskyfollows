@@ -12,10 +12,21 @@
 #=============================================================================
 
 from atproto import Client
+import datetime
 from my_data import *
 
 client = Client()
 client.login(user, pasw)
+
+def logger(level, message):
+    '''Logs to a file and prints to the screen'''
+    now = datetime.datetime.now()
+    ts = '[' + now.strftime("%a, %d %b %Y %H:%M:%S") + ']'
+    copy = ts + ' ' + level + ' ' + message
+    with open('bskyfollows.log', 'a') as lf:
+        lf.write(copy + '\n')
+    print(copy)
+    return None
 
 def get_followers():
     '''Collects profile data on the list of accounts following you'''
@@ -43,10 +54,10 @@ def follow_back(follower_list):
     for follower in follower_list:
         if follower.viewer['following'] == None:
             count += 1
-            print("Following " + follower.handle + " back.")
+            logger('INFO', "Following " + follower.handle + " back.")
             client.follow(follower.did)
     if count != 0:
-        print("I followed back " + str(count) + " accounts!")
+        logger('INFO', "I followed back " + str(count) + " accounts!")
     return None
 
 def unfollow(follows_list):
@@ -55,27 +66,26 @@ def unfollow(follows_list):
     for follow in follows_list:
         if follow.viewer['followed_by'] == None:
             count += 1
-            print(follow.handle + " hasn't followed me back.")
+            logger('INFO', follow.handle + " hasn't followed me back.")
             if follow.viewer['following'] is not None:
                 client.delete_follow(follow.viewer['following'])
-                print("Unfollowed " + follow.handle + "!")
+                logger('INFO', "Unfollowed " + follow.handle + "!")
             else:
-                print(follow.handle + " doesn't have a following link! Manually remove!")
+                logger('SHIT', follow.handle + " doesn't have a following link! Manually remove!")
     if count != 0:
-        print("I unfollowed " + str(count) + " accounts!")
+        logger('INFO', "I unfollowed " + str(count) + " accounts!")
     return None
 
 def main():
     '''Main processing function'''
-    print('Processing followers list...')
+    logger('INFO', 'Beginning follower management for ' + user)
+    logger('INFO', 'Processing followers list...')
     followers = get_followers()
     follow_back(followers)
-    print('')
-    print('Processing following list...')
+    logger('INFO', 'Processing following list...')
     following = get_following()
     unfollow(following)
-    print('')
-    print('All done!')
+    logger('HOORAY', 'All done!')
 
 if __name__ == '__main__':
     main()
