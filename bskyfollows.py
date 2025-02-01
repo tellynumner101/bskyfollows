@@ -29,7 +29,7 @@ def logger(level, message):
     return None
 
 def get_followers():
-    '''Collects profile data on the list of accounts following you'''
+    '''Collects profile data on the list of accounts following us'''
     followers = []
     response = client.get_followers(user, None, 100)
     followers.extend(response.followers)
@@ -39,7 +39,7 @@ def get_followers():
     return followers
 
 def get_following():
-    '''Collects profile data on the list of accounts you follow'''
+    '''Collects profile data on the list of accounts we follow'''
     follows = []
     response = client.get_follows(user, None, 100)
     follows.extend(response.follows)
@@ -66,7 +66,7 @@ def unfollow(follows_list):
     for follow in follows_list:
         if follow.viewer['followed_by'] == None:
             count += 1
-            logger('INFO', follow.handle + " hasn't followed me back.")
+            logger('ASSHOLE', follow.handle + " hasn't followed me back.")
             if follow.viewer['following'] is not None:
                 client.delete_follow(follow.viewer['following'])
                 logger('INFO', "Unfollowed " + follow.handle + "!")
