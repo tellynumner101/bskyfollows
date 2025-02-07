@@ -14,6 +14,7 @@
 from atproto import Client
 import datetime
 from my_data import *
+import time
 
 client = Client()
 client.login(user, pasw)
@@ -56,8 +57,8 @@ def follow_back(follower_list):
             count += 1
             logger('INFO', "Following " + follower.handle + " back.")
             client.follow(follower.did)
-    if count != 0:
-        logger('INFO', "I followed back " + str(count) + " accounts!")
+            time.sleep(0.5)
+    logger('INFO', "I followed back " + str(count) + " accounts!")
     return None
 
 def unfollow(follows_list):
@@ -70,10 +71,10 @@ def unfollow(follows_list):
             if follow.viewer['following'] is not None:
                 client.delete_follow(follow.viewer['following'])
                 logger('INFO', "Unfollowed " + follow.handle + "!")
+                time.sleep(0.5)
             else:
                 logger('SHIT', follow.handle + " doesn't have a following link! Manually remove!")
-    if count != 0:
-        logger('INFO', "I unfollowed " + str(count) + " accounts!")
+    logger('INFO', "I unfollowed " + str(count) + " accounts!")
     return None
 
 def main():
