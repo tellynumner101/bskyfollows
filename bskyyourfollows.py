@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-#title           : bskyfollows.py
+#title           : bskyyourfollows.py
 #description     : Follow a user's followers.
 #author          : tellynumner
 #date            : 02/22/25
 #version         : 1.0
-#usage           : ./bskyyourfollows.py
+#usage           : ./bskyyourfollows.py <some.example.username>
 #notes           :
 #python_version  : 3.12.3
 #==================================================================================================
@@ -13,7 +13,6 @@ from atproto import Client
 import datetime
 from my_data import *
 import sys
-import time
 
 bsky_user = sys.argv[1]
 client = Client()
@@ -115,7 +114,7 @@ def manage_followers(follower_list):
         following = follow_check(follower)
         last_post = last_post_date(follower, 14)
         if following == 'FOLLOWING':
-            logger('ALREADYFOLLOW', 'We already follow this person. Moving on.')
+            logger('ALREADYFOLLOW', 'We already follow '+ follower.handle + '. Moving on.')
         else:
             logger('WEDONTFOLLOW', "We don't follow " + follower.handle + '.')
             if last_post == 'CURRENT':
