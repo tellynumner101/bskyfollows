@@ -9,6 +9,7 @@
 #python_version  : 3.12.3
 #=============================================================================
 
+import argparse
 from atproto import Client
 import datetime
 from my_data import *
