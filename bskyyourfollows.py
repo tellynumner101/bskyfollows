@@ -9,7 +9,6 @@
 #python_version  : 3.12.3
 #==================================================================================================
 
-import argparse
 from atproto import Client
 import datetime
 from my_data import *
@@ -123,6 +122,7 @@ def manage_followers(follower_list):
                 logger('INFO', 'Following ' + follower.handle + '.')
                 follow_user(follower)
             else:
+                logger('HASNTPOSTED', follower.handle + " hasn't posted recently.")
                 logger('INFO', 'Not following ' + follower.handle + '.')
     return None
 
