@@ -13,6 +13,7 @@ import argparse
 from atproto import Client
 import datetime
 from my_data import *
+import time
 
 client = Client()
 client.login(user, pasw)
@@ -61,6 +62,7 @@ def follow_user(user):
     '''Follows a user'''
     try:
         client.follow(user.did)
+        time.sleep(1)
         logger('FOLLOWED', 'Followed ' + user.handle + '.')
     except:
         logger('FAILED', 'Failed to follow ' + user.handle + '.' )
@@ -70,6 +72,7 @@ def unfollow_user(user):
     '''Unfollows a user'''
     try:
         client.delete_follow(user.viewer.following)
+        time.sleep(1)
         logger('UNFOLLOWED', 'Unfollowed ' + user.handle + '.')
     except:
         logger('FAILED', 'Failed to unfollow ' + user.handle + '.' )

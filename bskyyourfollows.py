@@ -43,6 +43,7 @@ def follow_user(user):
     '''Follows a user'''
     try:
         client.follow(user.did)
+        time.sleep(1)
         logger('FOLLOWED', 'Followed ' + user.handle + '.')
     except:
         logger('FAILED', 'Failed to follow ' + user.handle + '.' )
@@ -106,7 +107,6 @@ def manage_followers(follower_list):
             else:
                 logger('HASNTPOSTED', follower.handle + " hasn't posted recently.")
                 logger('INFO', 'Not following ' + follower.handle + '.')
-        time.sleep(.5)
     return None
 
 def main():
