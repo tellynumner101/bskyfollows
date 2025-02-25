@@ -13,6 +13,7 @@ from atproto import Client
 import datetime
 from my_data import *
 import sys
+import time
 
 bsky_user = sys.argv[1]
 client = Client()
@@ -34,7 +35,7 @@ def get_followers():
     response = client.get_followers(bsky_user, None, 100)
     followers.extend(response.followers)
     while response.cursor:
-        response = client.get_followers(user, response.cursor, 100)
+        response = client.get_followers(bsky_user, response.cursor, 100)
         followers.extend(response.followers)
     return followers
 
@@ -85,24 +86,6 @@ def last_post_date(user, days_ago):
         return 'CURRENT'
     else:
         return 'OLD'
-
-def influencer_check(user, ratio):
-    """Checks a user's profile for their follower/following count to try to determine their follower
-       to follow ratio which determines whether or not they are an influencer.
-    """
-    profile = client.get_profile(user.did)
-    followers = int(profile.followers_count)
-    follows = int(profile.follows_count)
-    if followers == 0 or follows == 0:
-        logger('BOTALERT', user + ' has no follows or followers. Probable bot.')
-        return 'BOTALERT'
-    follower_ratio = followers / follows
-    if follower_ratio >= ratio and followers > 10000:
-        logger('INFLUENCER', user.handle + ' is an influencer.')
-        return 'INFLUENCER'
-    else:
-        logger('INFO', user.handle + ' is not an influencer.')
-        return 'REGULAR_JOE'
     
 def manage_followers(follower_list):
     """
@@ -123,6 +106,7 @@ def manage_followers(follower_list):
             else:
                 logger('HASNTPOSTED', follower.handle + " hasn't posted recently.")
                 logger('INFO', 'Not following ' + follower.handle + '.')
+        time.sleep(.5)
     return None
 
 def main():
